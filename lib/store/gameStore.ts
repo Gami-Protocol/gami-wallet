@@ -26,6 +26,10 @@ export type GameState = {
   persona: Persona;
   soundEnabled: boolean;
   hapticsEnabled: boolean;
+  /** Whether balances are hidden across the app. */
+  hideBalances: boolean;
+  /** IDs of completed quests. */
+  completedQuests: string[];
 };
 
 export type GameActions = {
@@ -40,6 +44,8 @@ export type GameActions = {
   setPersona: (p: Persona) => void;
   setSoundEnabled: (v: boolean) => void;
   setHapticsEnabled: (v: boolean) => void;
+  setHideBalances: (v: boolean) => void;
+  completeQuest: (id: string) => void;
   completeOnboarding: () => void;
   reset: () => void;
 };
@@ -62,6 +68,8 @@ const INITIAL: GameState = {
   persona: 'Hype',
   soundEnabled: true,
   hapticsEnabled: true,
+  hideBalances: false,
+  completedQuests: [],
 };
 
 function levelForXp(xp: number): number {
@@ -88,6 +96,11 @@ export const useGameStore = create<GameState & GameActions>()(
       setPersona: (persona) => set({ persona }),
       setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
       setHapticsEnabled: (hapticsEnabled) => set({ hapticsEnabled }),
+      setHideBalances: (hideBalances) => set({ hideBalances }),
+      completeQuest: (id) =>
+        set((s) =>
+          s.completedQuests.includes(id) ? s : { completedQuests: [...s.completedQuests, id] },
+        ),
       completeOnboarding: () => set({ onboarded: true }),
       reset: () => {
         void get();

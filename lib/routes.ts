@@ -19,4 +19,6 @@ export const ROUTES = {
   stash: '/(app)/stash',
   profile: '/(app)/profile',
   settings: '/settings',
+  send: '/send',
+  receive: '/receive',
 } as const;

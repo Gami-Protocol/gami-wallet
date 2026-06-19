@@ -168,6 +168,8 @@ export default function RootLayout() {
           <Stack.Screen name="(onboarding)" />
           <Stack.Screen name="(app)" />
           <Stack.Screen name="settings" options={{ presentation: 'card' }} />
+          <Stack.Screen name="send" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="receive" options={{ presentation: 'modal' }} />
         </Stack>
       </HeroUINativeProvider>
     </GestureHandlerRootView>
