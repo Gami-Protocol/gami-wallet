@@ -1,4 +1,7 @@
 // oxlint-disable-next-line eslint-plugin-import/no-unassigned-import
+import 'react-native-get-random-values';
+import { Buffer } from 'buffer';
+// oxlint-disable-next-line eslint-plugin-import/no-unassigned-import
 import '../global.css';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -7,8 +10,14 @@ import {
   Inter_500Medium,
   Inter_600SemiBold,
   Inter_700Bold,
-  useFonts,
 } from '@expo-google-fonts/inter';
+import { SpaceGrotesk_500Medium, SpaceGrotesk_700Bold } from '@expo-google-fonts/space-grotesk';
+import {
+  JetBrainsMono_400Regular,
+  JetBrainsMono_500Medium,
+  JetBrainsMono_700Bold,
+} from '@expo-google-fonts/jetbrains-mono';
+import { useFonts } from 'expo-font';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
 import { useEffect } from 'react';
@@ -24,6 +33,7 @@ import {
 
 import { initPostHog } from '@/lib/posthog';
 import { reportErrorToParent } from '@/lib/reportPreviewError';
+import { startEventAutoflush } from '@/lib/events';
 
 /**
  * Custom ErrorBoundary that reports React render errors to the parent window (Bilt preview iframe)
@@ -41,8 +51,13 @@ function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 
 export { ErrorBoundary };
 
-// Starter is light-only by default. Remove this when implementing requested dark mode.
-Uniwind.setTheme('light');
+// Force the cyber-brutalist arcade dark theme.
+Uniwind.setTheme('dark');
+
+// Provide a global Buffer for crypto libraries that expect it.
+if (typeof global.Buffer === 'undefined') {
+  global.Buffer = Buffer;
+}
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -52,6 +67,11 @@ export default function RootLayout() {
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
+    SpaceGrotesk_500Medium,
+    SpaceGrotesk_700Bold,
+    JetBrainsMono_400Regular,
+    JetBrainsMono_500Medium,
+    JetBrainsMono_700Bold,
   });
 
   // Report uncaught JS errors and unhandled promise rejections to parent (Bilt preview iframe)
@@ -122,6 +142,8 @@ export default function RootLayout() {
     }
   }, []);
 
+  useEffect(() => startEventAutoflush(), []);
+
   useEffect(() => {
     if (loaded || error) {
       void SplashScreen.hideAsync();
@@ -133,10 +155,19 @@ export default function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#08060F' }}>
       <HeroUINativeProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ title: 'Habits', headerShown: false }} />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: '#08060F' },
+            animation: 'fade',
+          }}
+        >
+          <Stack.Screen name="index" />
+          <Stack.Screen name="(onboarding)" />
+          <Stack.Screen name="(app)" />
+          <Stack.Screen name="settings" options={{ presentation: 'card' }} />
         </Stack>
       </HeroUINativeProvider>
     </GestureHandlerRootView>

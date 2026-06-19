@@ -24,17 +24,32 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ios: {
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
+        NSFaceIDUsageDescription:
+          'GAMI Wallet uses Face ID to unlock your wallet and reveal your secret backup phrase.',
       },
       supportsTablet: true,
-      bundleIdentifier: process.env.BILT_IOS_BUNDLE_ID ?? 'com.yourcompany.yourapp',
+      bundleIdentifier: process.env.BILT_IOS_BUNDLE_ID ?? 'io.gamiprotocol.wallet',
     },
     android: {
-      package: process.env.BILT_ANDROID_PACKAGE ?? 'com.yourcompany.yourapp',
+      package: process.env.BILT_ANDROID_PACKAGE ?? 'io.gamiprotocol.wallet',
     },
     extra: {
       appStoreAppId: process.env.BILT_APP_STORE_APP_ID,
     },
-    plugins: ['expo-router', 'expo-font', ...nativePlugins],
+    plugins: [
+      'expo-router',
+      'expo-font',
+      'expo-secure-store',
+      [
+        'expo-local-authentication',
+        {
+          faceIDPermission:
+            'GAMI Wallet uses Face ID to unlock your wallet and reveal your backup phrase.',
+        },
+      ],
+      'expo-notifications',
+      ...nativePlugins,
+    ],
     experiments: {
       typedRoutes: true,
       reactCompiler: true,
