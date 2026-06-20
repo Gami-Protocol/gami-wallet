@@ -14,7 +14,7 @@
     "ios": {
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSFaceIDUsageDescription": "GAMI Wallet uses Face ID to unlock your wallet and reveal your secret backup phrase."
+        "NSFaceIDUsageDescription": "GAMI Wallet uses Face ID to unlock your wallet and reveal your backup phrase."
       },
       "supportsTablet": true,
       "bundleIdentifier": "io.gamiprotocol.wallet"
