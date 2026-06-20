@@ -32,7 +32,6 @@
         "appleTeamId": "28DWZWQ4YG"
       },
       "android": {
-        "serviceAccountKeyPath": "$ANDROID_SERVICE_ACCOUNT_KEY_PATH",
         "track": "production"
       }
     }
