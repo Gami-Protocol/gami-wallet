@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "GAMI Wallet",
+    "slug": "gami-wallet",
+    "newArchEnabled": true,
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "gami-wallet",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSFaceIDUsageDescription": "GAMI Wallet uses Face ID to unlock your wallet and reveal your backup phrase."
+      },
+      "supportsTablet": true,
+      "bundleIdentifier": "io.gamiprotocol.wallet"
+    },
+    "android": {
+      "package": "io.gamiprotocol.wallet"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "GAMI Wallet uses Face ID to unlock your wallet and reveal your backup phrase."
+        }
+      ],
+      "expo-notifications"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
