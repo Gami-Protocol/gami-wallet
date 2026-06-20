@@ -109,11 +109,11 @@ eas login
 
 **Build profiles:**
 
-| Profile | Distribution | Purpose |
-|---|---|---|
-| `development` | Internal | Dev client build for local development |
-| `preview` | Internal | Ad-hoc build for testing without dev client |
-| `production` | Store | App Store / Google Play submission |
+| Profile       | Distribution | Purpose                                     |
+| ------------- | ------------ | ------------------------------------------- |
+| `development` | Internal     | Dev client build for local development      |
+| `preview`     | Internal     | Ad-hoc build for testing without dev client |
+| `production`  | Store        | App Store / Google Play submission          |
 
 **Run a build:**
 
@@ -129,11 +129,11 @@ eas build --profile production --platform all
 
 The `production` submit profile reads the following environment variables:
 
-| Variable | Description |
-|---|---|
-| `APPLE_ID` | Your Apple ID email address |
-| `ASC_APP_ID` | App Store Connect numeric app ID |
-| `APPLE_TEAM_ID` | Your Apple Developer Team ID |
+| Variable                           | Description                                           |
+| ---------------------------------- | ----------------------------------------------------- |
+| `APPLE_ID`                         | Your Apple ID email address                           |
+| `ASC_APP_ID`                       | App Store Connect numeric app ID                      |
+| `APPLE_TEAM_ID`                    | Your Apple Developer Team ID                          |
 | `ANDROID_SERVICE_ACCOUNT_KEY_PATH` | Path to the Google Play service account JSON key file |
 
 Set these in your EAS project secrets or local environment, then run:
