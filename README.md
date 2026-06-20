@@ -96,6 +96,54 @@ Simply send a message to your Bilt project: "Deploy this app to production"
 
 Bilt will handle the build and provide you with download links or submission-ready builds.
 
+### Deploy with EAS (Expo Application Services)
+
+This project includes an [`eas.json`](./eas.json) configuration with `development`, `preview`, and `production` build profiles.
+
+**Prerequisites:**
+
+```sh
+npm install -g eas-cli
+eas login
+```
+
+**Build profiles:**
+
+| Profile | Distribution | Purpose |
+|---|---|---|
+| `development` | Internal | Dev client build for local development |
+| `preview` | Internal | Ad-hoc build for testing without dev client |
+| `production` | Store | App Store / Google Play submission |
+
+**Run a build:**
+
+```sh
+# Development
+eas build --profile development --platform all
+
+# Production
+eas build --profile production --platform all
+```
+
+**Submit to stores:**
+
+The `production` submit profile reads the following environment variables:
+
+| Variable | Description |
+|---|---|
+| `APPLE_ID` | Your Apple ID email address |
+| `ASC_APP_ID` | App Store Connect numeric app ID |
+| `APPLE_TEAM_ID` | Your Apple Developer Team ID |
+| `ANDROID_SERVICE_ACCOUNT_KEY_PATH` | Path to the Google Play service account JSON key file |
+
+Set these in your EAS project secrets or local environment, then run:
+
+```sh
+eas submit --profile production --platform all
+```
+
+For more details see the [EAS JSON reference](https://docs.expo.dev/build/eas-json/).
+
 ## How can I make changes to my app?
 
 **Via Bilt (Easiest)**
