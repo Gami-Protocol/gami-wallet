@@ -4,6 +4,11 @@ module.exports = ({ config }) => {
       ? [['expo-dev-client', { launchMode: 'most-recent' }]]
       : [];
 
+  // react-native-maps renders Google Maps on Android, which requires an API key.
+  // Provide it via the GOOGLE_MAPS_API_KEY env var (set as an EAS env var/secret).
+  // When unset, no key is injected so the manifest stays valid (iOS uses Apple Maps).
+  const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY || undefined;
+
   return {
     ...config,
     name: 'GAMI Wallet',
@@ -28,6 +33,7 @@ module.exports = ({ config }) => {
     },
     android: {
       package: process.env.BILT_ANDROID_PACKAGE ?? 'io.gamiprotocol.wallet',
+      ...(googleMapsApiKey ? { config: { googleMaps: { apiKey: googleMapsApiKey } } } : {}),
     },
     extra: {
       appStoreAppId: process.env.BILT_APP_STORE_APP_ID,
