@@ -34,6 +34,9 @@
       ],
       "expo-notifications"
     ],
+    "extra": {
+      "eas": {}
+    },
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

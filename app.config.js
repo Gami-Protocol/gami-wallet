@@ -9,6 +9,16 @@ module.exports = ({ config }) => {
   // When unset, no key is injected so the manifest stays valid (iOS uses Apple Maps).
   const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY || undefined;
 
+  // EAS sets EAS_PROJECT_ID automatically during builds. For native builds this
+  // must be present; fail fast here rather than getting a cryptic TypeError later.
+  const easProjectId = process.env.EAS_PROJECT_ID;
+  if (!easProjectId && process.env.EXPO_PLATFORM === 'native') {
+    throw new Error(
+      'EAS_PROJECT_ID environment variable is not set. ' +
+        'Add it as an EAS environment variable or run `eas init` to link the project.',
+    );
+  }
+
   return {
     ...config,
     name: 'GAMI Wallet',
@@ -36,6 +46,9 @@ module.exports = ({ config }) => {
       ...(googleMapsApiKey ? { config: { googleMaps: { apiKey: googleMapsApiKey } } } : {}),
     },
     extra: {
+      eas: {
+        projectId: easProjectId,
+      },
       appStoreAppId: process.env.BILT_APP_STORE_APP_ID,
     },
     plugins: [
