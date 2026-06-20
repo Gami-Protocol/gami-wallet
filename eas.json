@@ -28,7 +28,7 @@
     "production": {
       "ios": {
         "appleId": "6782215100",
-        "ascAppId": "",
+        "ascAppId": "com.gamiwallet.app",
         "appleTeamId": "28DWZWQ4YG"
       },
       "android": {
