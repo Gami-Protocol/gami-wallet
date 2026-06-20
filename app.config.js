@@ -1,9 +1,5 @@
-import type { ConfigContext, ExpoConfig } from '@expo/config';
-
-type ExpoPlugins = NonNullable<ExpoConfig['plugins']>;
-
-export default ({ config }: ConfigContext): ExpoConfig => {
-  const nativePlugins: ExpoPlugins =
+module.exports = ({ config }) => {
+  const nativePlugins =
     process.env.EXPO_PLATFORM === 'native'
       ? [['expo-dev-client', { launchMode: 'most-recent' }], 'react-native-maps']
       : [];
