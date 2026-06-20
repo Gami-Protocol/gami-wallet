@@ -1,7 +1,7 @@
 module.exports = ({ config }) => {
   const nativePlugins =
     process.env.EXPO_PLATFORM === 'native'
-      ? [['expo-dev-client', { launchMode: 'most-recent' }], 'react-native-maps']
+      ? [['expo-dev-client', { launchMode: 'most-recent' }]]
       : [];
 
   return {
