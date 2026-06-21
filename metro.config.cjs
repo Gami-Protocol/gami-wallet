@@ -255,19 +255,6 @@ config.server = {
   },
 };
 
-// Stub out react-native-maps when running in Expo Go (no native module available)
-// In dev builds with EXPO_PLATFORM=native, the real module is used.
-if (process.env.EXPO_PLATFORM !== 'native') {
-  config.resolver.resolveRequest = (context, moduleName, platform) => {
-    if (moduleName === 'react-native-maps') {
-      return {
-        type: 'empty',
-      };
-    }
-    return context.resolveRequest(context, moduleName, platform);
-  };
-}
-
 module.exports = withUniwindConfig(config, {
   cssEntryFile: './global.css',
   dtsFile: './uniwind-types.d.ts',
