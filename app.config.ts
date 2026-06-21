@@ -17,6 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     orientation: 'portrait',
     userInterfaceStyle: 'automatic',
     scheme: 'gami-wallet',
+    icon: './assets/icon.jpg',
     runtimeVersion: {
       policy: 'appVersion',
     },
@@ -32,6 +33,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
     android: {
       package: process.env.BILT_ANDROID_PACKAGE ?? 'io.gamiprotocol.wallet',
+      adaptiveIcon: {
+        foregroundImage: './assets/icon.jpg',
+        backgroundColor: '#7C3AED',
+      },
     },
     extra: {
       appStoreAppId: process.env.BILT_APP_STORE_APP_ID,
