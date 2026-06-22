@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -8,7 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { ChevronLeft, X } from 'lucide-react-native';
 
@@ -23,6 +23,7 @@ import { Body, Display, Mono, PrimaryButton, RadialBloom, StickerCard } from '@/
 type Phase = 'form' | 'submitting' | 'done';
 
 export default function SendScreen() {
+  const params = useLocalSearchParams();
   const completeQuest = useGameStore((s) => s.completeQuest);
   const grantXp = useGameStore((s) => s.grantXp);
   const [chain, setChain] = useState<ChainId>('base');
@@ -34,6 +35,22 @@ export default function SendScreen() {
   const [hash, setHash] = useState<string | null>(null);
 
   const cfg = CHAINS[chain];
+
+  // Prefill from a NOVA propose_send proposal (read + propose; user still signs).
+  // Capture params once at mount via ref so the effect has no stale-closure risk
+  // and does not need to re-run when the router updates params later.
+  const initialParams = useRef(params);
+  useEffect(() => {
+    const p = initialParams.current;
+    const allowed: ChainId[] = ['base', 'polygon', 'arbitrum', 'solana'];
+    const chainParam = Array.isArray(p.chain) ? p.chain[0] : p.chain;
+    if (chainParam && (allowed as string[]).includes(chainParam)) {
+      // eslint-disable-next-line typescript/no-unsafe-type-assertion -- guarded by .includes() check above
+      setChain(chainParam as ChainId);
+    }
+    if (typeof p.to === 'string' && p.to) setTo(p.to);
+    if (typeof p.amount === 'string' && p.amount) setAmount(p.amount);
+  }, []);
 
   useEffect(() => {
     let active = true;

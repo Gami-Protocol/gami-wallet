@@ -8,6 +8,8 @@ import {
   Bell,
   ChevronRight,
   HelpCircle,
+  Hammer,
+  LogIn,
   Settings as SettingsIcon,
   Shield,
   Sparkles,
@@ -18,6 +20,7 @@ import { COLORS, FONTS } from '@/lib/theme';
 import { ROUTES } from '@/lib/routes';
 import { shortAddr } from '@/lib/utils';
 import { useGameStore, xpProgress } from '@/lib/store/gameStore';
+import { useSession } from '@/lib/auth/session';
 import { useAddresses } from '@/hooks/useAddresses';
 import { Body, CharacterTile, Display, Mono, RadialBloom, StickerCard } from '@/components/sticker';
 
@@ -51,6 +54,8 @@ export default function ProfileScreen() {
   const streak = useGameStore((s) => s.streak);
   const badges = useGameStore((s) => s.badges);
   const backedUp = useGameStore((s) => s.backedUp);
+  const { session } = useSession();
+  const signedIn = Boolean(session);
   const addrs = useAddresses();
   const [copied, setCopied] = useState(false);
 
@@ -66,6 +71,19 @@ export default function ProfileScreen() {
   };
 
   const accountRows: AccountRow[] = [
+    {
+      key: 'account',
+      label: signedIn ? `Account · ${session?.user.email ?? 'synced'}` : 'Sign in to sync',
+      icon: LogIn,
+      isNew: !signedIn,
+      onPress: () => router.push(signedIn ? ROUTES.settings : ROUTES.signIn),
+    },
+    {
+      key: 'builder',
+      label: 'Build a quest',
+      icon: Hammer,
+      onPress: () => router.push(ROUTES.questBuilder),
+    },
     {
       key: 'security',
       label: 'Security & backup',

@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppState, type AppStateStatus } from 'react-native';
 
+import { isSupabaseConfigured, supabase } from '@/lib/supabase';
+
 /**
  * GAMI Event SDK (lightweight, local-first).
  *
@@ -59,17 +61,37 @@ export async function fireEvent(type: string, payload?: Record<string, unknown>)
 }
 
 /**
- * Flush the queue to the server. No-op transport until a backend is connected;
- * the events stay queued so they can be replayed once the endpoint exists.
+ * Flush the queue to the events table. Requires a signed-in user (RLS scopes
+ * rows to the user). Events stay queued when signed out so nothing is lost; the
+ * unique (user_id, idempotency_key) constraint makes replays safe.
  */
 export async function flush(): Promise<void> {
   if (flushing) return;
   await ensureLoaded();
   if (queue.length === 0) return;
+  if (!isSupabaseConfigured) return;
   flushing = true;
   try {
-    // TODO(backend): POST `queue` to /events with HMAC signature + idempotency keys.
-    // Once a Supabase backend is enabled, sign each batch and clear on 2xx.
+    const { data: userData } = await supabase.auth.getUser();
+    const uid = userData.user?.id;
+    if (!uid) return;
+    const batch = queue.slice(0, 100);
+    const rows = batch.map((e) => ({
+      user_id: uid,
+      idempotency_key: e.idempotency_key,
+      type: e.type,
+      // GamiEvent.payload is Record<string,unknown> which is structurally
+      // compatible with Json's object branch; the cast is safe here.
+      // eslint-disable-next-line typescript/no-unsafe-type-assertion -- Record<string,unknown> satisfies Json object branch; shape is controlled by fireEvent callers
+      payload: (e.payload ?? null) as import('@/lib/database.types').Json | null,
+    }));
+    const { error } = await supabase
+      .from('events')
+      .upsert(rows, { onConflict: 'user_id,idempotency_key', ignoreDuplicates: true });
+    if (!error) {
+      queue = queue.slice(batch.length);
+      await persist();
+    }
   } finally {
     flushing = false;
   }

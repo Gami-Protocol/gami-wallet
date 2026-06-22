@@ -38,6 +38,7 @@ import {
 import { revealMnemonic, wipeWallet } from '@/lib/wallet/wallet';
 import { useAddresses } from '@/hooks/useAddresses';
 import { clearMessages } from '@/lib/nova';
+import { signOut as supabaseSignOut } from '@/lib/auth/session';
 import { Body, Display, Mono, PrimaryButton, RadialBloom, StickerCard } from '@/components/sticker';
 import {
   SegmentedSelect,
@@ -293,6 +294,7 @@ export default function SettingsScreen() {
               void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
               await syncDailyReminder('off');
               await clearMessages();
+              await supabaseSignOut();
               await wipeWallet();
               await clearVault();
               reset();

@@ -4,10 +4,12 @@ import { Compass, House, Sparkles, User, Wallet } from 'lucide-react-native';
 
 import { COLORS } from '@/lib/theme';
 import { useAutoLock } from '@/lib/useAutoLock';
+import { useProfileSync } from '@/lib/store/profileSync';
 import { LockOverlay } from '@/components/LockOverlay';
 
 export default function AppTabsLayout() {
   const { locked, unlock } = useAutoLock();
+  useProfileSync();
   return (
     <>
       {/* eslint-disable-next-line react/style-prop-object -- expo-status-bar `style` is a string enum, not a RN style object */}

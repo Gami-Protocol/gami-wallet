@@ -8,7 +8,7 @@ import { Pressable } from 'react-native';
 import { COLORS, FONTS } from '@/lib/theme';
 import { ROUTES } from '@/lib/routes';
 import { fireEvent } from '@/lib/events';
-import { QUESTS } from '@/lib/quests';
+import { SEED_QUESTS } from '@/lib/quests';
 import { useGameStore, xpProgress } from '@/lib/store/gameStore';
 import {
   Body,
@@ -96,7 +96,7 @@ export default function HomeScreen() {
 
   const { into, total, ratio } = xpProgress(xp);
   const hasStarter = badges.includes('STARTER');
-  const novaQuest = QUESTS.find((q) => q.novaPick) ?? QUESTS[1];
+  const novaQuest = SEED_QUESTS.find((q) => q.novaPick) ?? SEED_QUESTS[1];
 
   useEffect(() => {
     void fireEvent('app.home.view');
