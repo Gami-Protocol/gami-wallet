@@ -47,7 +47,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
             'GAMI Wallet uses Face ID to unlock your wallet and reveal your backup phrase.',
         },
       ],
-      'expo-notifications',
+      // expo-notifications plugin is intentionally omitted: the app only uses
+      // local scheduled notifications (no remote APNs push). Including the
+      // plugin adds the aps-environment entitlement to the iOS build, which
+      // causes archive failures when the provisioning profile does not have
+      // Push Notifications capability enabled.
       ...nativePlugins,
     ],
     experiments: {
