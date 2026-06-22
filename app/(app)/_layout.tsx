@@ -3,8 +3,11 @@ import { StatusBar } from 'expo-status-bar';
 import { Compass, House, Sparkles, User, Wallet } from 'lucide-react-native';
 
 import { COLORS } from '@/lib/theme';
+import { useAutoLock } from '@/lib/useAutoLock';
+import { LockOverlay } from '@/components/LockOverlay';
 
 export default function AppTabsLayout() {
+  const { locked, unlock } = useAutoLock();
   return (
     <>
       {/* eslint-disable-next-line react/style-prop-object -- expo-status-bar `style` is a string enum, not a RN style object */}
@@ -65,6 +68,7 @@ export default function AppTabsLayout() {
           }}
         />
       </Tabs>
+      {locked ? <LockOverlay onUnlock={unlock} /> : null}
     </>
   );
 }

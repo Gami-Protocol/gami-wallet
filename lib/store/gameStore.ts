@@ -7,6 +7,12 @@ import type { CharacterId } from '@/components/sticker/CharacterTile';
 
 export type Persona = 'Hype' | 'Chill' | 'Pro';
 
+/** Minutes of inactivity before the app re-locks. 'never' disables auto-lock. */
+export type AutoLock = '1' | '5' | '15' | 'never';
+
+/** Daily reminder time in 24h HH:mm, or 'off'. */
+export type ReminderTime = '09:00' | '12:00' | '18:00' | 'off';
+
 export type GameState = {
   /** Whether onboarding (02-11) has fully completed. */
   onboarded: boolean;
@@ -30,6 +36,14 @@ export type GameState = {
   hideBalances: boolean;
   /** IDs of completed quests. */
   completedQuests: string[];
+  /** Face ID / biometric unlock + send confirmation enabled. */
+  faceIdEnabled: boolean;
+  /** Inactivity window before the app re-locks. */
+  autoLock: AutoLock;
+  /** Daily quest reminder time (or off). */
+  reminder: ReminderTime;
+  /** Optional email connected to the account (display only; auth is on-device). */
+  email: string | null;
 };
 
 export type GameActions = {
@@ -46,6 +60,10 @@ export type GameActions = {
   setHapticsEnabled: (v: boolean) => void;
   setHideBalances: (v: boolean) => void;
   completeQuest: (id: string) => void;
+  setFaceIdEnabled: (v: boolean) => void;
+  setAutoLock: (v: AutoLock) => void;
+  setReminder: (v: ReminderTime) => void;
+  setEmail: (v: string | null) => void;
   completeOnboarding: () => void;
   reset: () => void;
 };
@@ -70,6 +88,10 @@ const INITIAL: GameState = {
   hapticsEnabled: true,
   hideBalances: false,
   completedQuests: [],
+  faceIdEnabled: true,
+  autoLock: '5',
+  reminder: '09:00',
+  email: null,
 };
 
 function levelForXp(xp: number): number {
@@ -101,6 +123,10 @@ export const useGameStore = create<GameState & GameActions>()(
         set((s) =>
           s.completedQuests.includes(id) ? s : { completedQuests: [...s.completedQuests, id] },
         ),
+      setFaceIdEnabled: (faceIdEnabled) => set({ faceIdEnabled }),
+      setAutoLock: (autoLock) => set({ autoLock }),
+      setReminder: (reminder) => set({ reminder }),
+      setEmail: (email) => set({ email }),
       completeOnboarding: () => set({ onboarded: true }),
       reset: () => {
         void get();
