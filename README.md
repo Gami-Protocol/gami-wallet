@@ -1,160 +1,130 @@
-# Welcome to your Bilt project
+# GAMI Wallet
 
-[![Built with Bilt](https://img.shields.io/endpoint?url=https%3A%2F%2Fapp.bilt.me%2Fapi%2Fbadge)](https://bilt.me)
+A mobile crypto wallet for the GAMI Protocol ecosystem, built with React Native and Expo. Manage your Solana and EVM assets, complete quests, and interact with GAMI's AI companion Nova — all in one app.
 
-## Project info
+## Features
 
-**Preview URL**: https://app.bilt.me/project/d312f89a-a5e9-4586-b30f-a7d34868491d/preview
+- **Multi-chain support** — Solana and EVM wallets generated from a single seed phrase (BIP-39 / BIP-32)
+- **Secure key storage** — private keys stored in the device's secure enclave via `expo-secure-store`
+- **Biometric lock** — Face ID / fingerprint authentication via `expo-local-authentication`
+- **Send & Receive** — transfer tokens with QR code generation and scanning
+- **Quest system** — complete on-chain and off-chain quests to earn rewards
+- **Nova AI** — an in-app AI assistant powered by the GAMI backend
+- **Onboarding flow** — guided wallet creation with seed phrase backup (vault step)
+- **Settings** — theme, security, and account management
 
-**Project ID**: `d312f89a-a5e9-4586-b30f-a7d34868491d`
+## Tech Stack
 
-## How can I edit this app?
+| Layer | Technology |
+|---|---|
+| Framework | React Native 0.81 + Expo 54 |
+| Language | TypeScript 5.9 |
+| Navigation | Expo Router (file-based) |
+| Styling | Tailwind CSS via Uniwind, HeroUI Native |
+| State | Zustand |
+| Forms | React Hook Form + Zod |
+| Crypto | `@solana/web3.js`, `viem`, `@scure/bip32`, `@scure/bip39` |
+| Auth / DB | Supabase |
+| Analytics | PostHog |
+| Storage | `expo-secure-store`, `@react-native-async-storage/async-storage` |
 
-There are several ways of editing your application.
+## Getting Started
 
-**Use Bilt**
+### Prerequisites
 
-Simply visit your [Bilt Project](https://app.bilt.me/agent/d312f89a-a5e9-4586-b30f-a7d34868491d) and start sending messages. Describe what you want to change, add, or fix in natural language.
+- Node.js 18+ and npm 10+
+- [Expo CLI](https://docs.expo.dev/get-started/installation/) — `npm install -g expo-cli`
+- Expo Go on your phone ([iOS](https://apps.apple.com/app/expo-go/id982107779) | [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)), or a simulator/emulator
 
-Changes made via Bilt are instant - just send a message and your app updates.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can export the source code from Bilt and make changes directly.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Installation
 
 ```sh
-# Step 1: Export and clone your Bilt project.
-# (Download source from Bilt or connect to your git repo)
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone https://github.com/Gami-Protocol/gami-wallet.git
+cd gami-wallet
 npm install
+```
 
-# Step 4: Start the Expo development server.
+### Running the app
+
+```sh
 npx expo start
 ```
 
-Scan the QR code with Expo Go on your phone to see your app running locally.
+Scan the QR code in the terminal with Expo Go to launch on your device, or press `i` for iOS simulator / `a` for Android emulator.
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- React Native
-- Expo
-- TypeScript
-- AsyncStorage (local data persistence)
-- Expo Router (navigation)
-
-All generated automatically by Bilt from your natural language instructions.
-
-## How can I test this project?
-
-**Option 1: Instant Preview (Recommended)**
-
-Open the preview URL in your browser: `https://app.bilt.me/project/d312f89a-a5e9-4586-b30f-a7d34868491d/preview`
-
-Scan the QR code with Expo Go ([iOS](https://apps.apple.com/app/expo-go/id982107779) | [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)) on your phone.
-
-**Option 2: Run Locally**
+To run natively (requires Xcode / Android Studio):
 
 ```sh
-npm install
-npx expo start
+npm run ios      # iOS
+npm run android  # Android
 ```
 
-Then scan the QR code with Expo Go.
+## Project Structure
 
-## How can I deploy this project?
+```
+app/
+  (app)/          # Authenticated tab screens (Home, Stash, Quests, Profile, Nova)
+  (onboarding)/   # Wallet creation / import flow
+  send.tsx        # Send tokens modal
+  receive.tsx     # Receive / QR code modal
+  settings.tsx    # Settings screen
+  sign-in.tsx     # Email OTP sign-in modal
+  quest-builder.tsx
 
-Go to your [Bilt Project](https://app.bilt.me/agent/d312f89a-a5e9-4586-b30f-a7d34868491d), after that go to Settings -> App Store.
+components/
+  LockOverlay.tsx       # Biometric lock screen
+  OnboardingScreen.tsx  # Shared onboarding wrapper
 
-### Deploy with Bilt
-
-Simply send a message to your Bilt project: "Deploy this app to production"
-
-Bilt will handle the build and provide you with download links or submission-ready builds.
-
-## How can I make changes to my app?
-
-**Via Bilt (Easiest)**
-
-Visit your [Bilt Project](https://app.bilt.me/agent/d312f89a-a5e9-4586-b30f-a7d34868491d) and send a message describing what you want:
-
-- "Add a dark mode toggle"
-- "Change the button color to blue"
-- "Add a new screen for user settings"
-- "Fix the navigation bar spacing"
-
-Bilt understands natural language and updates your app automatically.
-
-**Via Code**
-
-Export the source, make changes in your IDE, and test locally with `npx expo start`.
-
-## Can I use this with the MCP protocol?
-
-Yes! Bilt is available as a remote MCP server at `https://mcp.bilt.me/mcp`.
-
-Connect any MCP-compatible AI agent (Claude Desktop, OpenClaw, etc.) to programmatically build and modify mobile apps.
-
-**Example MCP integration:**
-
-```json
-{
-  "mcpServers": {
-    "bilt": {
-      "transport": {
-        "type": "sse",
-        "url": "https://mcp.bilt.me/mcp/sse",
-        "headers": {
-          "Authorization": "Bearer YOUR_API_KEY"
-        }
-      }
-    }
-  }
-}
+lib/
+  wallet/         # Key generation, chain helpers, balance fetching
+  auth/           # Authentication helpers
+  store/          # Zustand stores (game, quests, profile)
+  supabase.ts     # Supabase client
+  nova.ts         # Nova AI helper
+  quests.ts       # Quest logic
+  events.ts       # Analytics event helpers
 ```
 
-Read more:
+## Code Quality
 
-- [Bilt MCP Documentation](https://bilt.me/docs)
-- [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.buildingapplications%2Fmcp/versions/latest)
+```sh
+npm run lint           # JS/TS linting (oxlint)
+npm run lint:css       # CSS/Tailwind linting
+npm run format:check   # Formatting check (oxfmt)
+npm run format         # Auto-format
+npm run expo-check     # Verify Expo dependency versions
+```
 
-## Need help?
+## Environment Variables
 
-- 📚 [Bilt Documentation](https://bilt.me/docs)
-- 💬 [Discord Community](https://discord.gg/3FqNgmSYdZ)
-- 🐦 [Twitter Updates](https://twitter.com/biltmeanapp)
-- 📧 Email: support@bilt.me
+The app uses Supabase for auth and data. Create a `.env` file (or set the variables in your CI environment):
 
----
+```env
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
 
-<div align="center">
+Optional build-time overrides (used by the Bilt CI pipeline):
 
-**Built by AI. No code required.** ✨
+```env
+BILT_APP_VERSION=1.0.0
+BILT_IOS_BUNDLE_ID=io.gamiprotocol.wallet
+BILT_ANDROID_PACKAGE=io.gamiprotocol.wallet
+```
 
-[Try Bilt](https://bilt.me) • [View Docs](https://bilt.me/docs) • [Docs MCP Server](https://bilt.me/docs/mcp)
+## Bundle IDs
 
-</div>
+| Platform | Identifier |
+|---|---|
+| iOS | `io.gamiprotocol.wallet` |
+| Android | `io.gamiprotocol.wallet` |
+
+## Contributing
+
+1. Fork the repository and create a feature branch.
+2. Make your changes and run `npm run lint` and `npm run format:check`.
+3. Open a pull request against `main`.
+
+## License
+
+© GAMI Protocol. All rights reserved.
