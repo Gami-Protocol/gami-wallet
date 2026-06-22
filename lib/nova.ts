@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
+import { generateQuest, isMcpConfigured, normalizeMcpQuest } from '@/lib/mcp';
 import { SEED_QUESTS } from '@/lib/quests';
 import type { Persona } from '@/lib/store/gameStore';
 
@@ -78,9 +79,53 @@ const QUEST_INTROS: Record<Persona, string> = {
   Pro: 'Recommended next action based on your progress:',
 };
 
-/** Persona-aware local responder used when the backend is unreachable. */
+const QUEST_INTENT = /quest|do next|what should|next move|earn|xp/i;
+
+/** Profile passed to the MCP quest agent for personalization. */
+export type NovaProfile = {
+  walletId?: string;
+  xp?: number;
+  interests?: string[];
+};
+
+/**
+ * Offline / signed-out responder. When the agentic MCP backend
+ * (gami-protocol-mcp) is configured and the prompt expresses quest intent, NOVA
+ * asks the backend's quest agent for a personalized quest. On any miss — backend
+ * unconfigured, no quest intent, or a failed request — it falls back to the
+ * static `localRespond` so the chat always replies.
+ *
+ * This is the fallback used when the Supabase `streamReply` path is unavailable.
+ */
+export async function respond(
+  prompt: string,
+  persona: Persona,
+  profile?: NovaProfile,
+): Promise<NovaMessage> {
+  if (QUEST_INTENT.test(prompt) && isMcpConfigured()) {
+    const mcp = await generateQuest({
+      walletId: profile?.walletId,
+      xp: profile?.xp,
+      persona,
+      interests: profile?.interests,
+    });
+    if (mcp) {
+      const q = normalizeMcpQuest(mcp);
+      return {
+        id: `${Date.now()}-nova`,
+        role: 'nova',
+        content: `${QUEST_INTROS[persona]} ${q.title} (${q.code}) — +${q.xp} XP.`,
+        ts: Date.now(),
+        tools: [{ name: 'generate_quest', summary: 'generate_quest', input: { title: q.title } }],
+      };
+    }
+  }
+  return localRespond(prompt, persona);
+}
+
+/** Persona-aware static responder used when no backend is reachable. */
 export function localRespond(prompt: string, persona: Persona): NovaMessage {
-  const wantsQuest = /quest|do next|what should|next move|earn|xp/i.test(prompt);
+  const wantsQuest = QUEST_INTENT.test(prompt);
   const pick = SEED_QUESTS.find((q) => q.novaPick) ?? SEED_QUESTS[1];
   if (wantsQuest) {
     return {

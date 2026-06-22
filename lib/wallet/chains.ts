@@ -1,3 +1,4 @@
+import { defineChain } from 'viem';
 import { arbitrum, base, polygon } from 'viem/chains';
 import type { Chain } from 'viem';
 
@@ -9,7 +10,7 @@ import type { Chain } from 'viem';
 
 export type ChainKind = 'evm' | 'solana';
 
-export type ChainId = 'base' | 'polygon' | 'arbitrum' | 'solana';
+export type ChainId = 'gami' | 'base' | 'polygon' | 'arbitrum' | 'solana';
 
 export type ChainConfig = {
   id: ChainId;
@@ -17,7 +18,7 @@ export type ChainConfig = {
   label: string;
   symbol: string;
   /** Accent color key for the chain pill. */
-  accent: 'cyan' | 'purple' | 'magenta' | 'lime';
+  accent: 'cyan' | 'purple' | 'magenta' | 'lime' | 'yellow';
   /** RPC endpoint. */
   rpc: string;
   /** Native-token decimals. */
@@ -28,7 +29,40 @@ export type ChainConfig = {
   viemChain?: Chain;
 };
 
+/**
+ * Gami Protocol chain (gami-protocol-chain): a Cosmos SDK chain with EVM
+ * compatibility via stateful precompiles (XP at 0x..0800, Treasury at 0x..0801).
+ * It has no public testnet yet, so RPC, chain id and explorer are read from env
+ * and default to the local devnet from the chain repo's wallet SDK. Override via
+ * EXPO_PUBLIC_GAMI_RPC_URL / EXPO_PUBLIC_GAMI_CHAIN_ID / EXPO_PUBLIC_GAMI_EXPLORER_URL.
+ */
+const GAMI_RPC = process.env.EXPO_PUBLIC_GAMI_RPC_URL ?? 'http://localhost:8545';
+const GAMI_CHAIN_ID = Number(process.env.EXPO_PUBLIC_GAMI_CHAIN_ID ?? '9000');
+const GAMI_EXPLORER = process.env.EXPO_PUBLIC_GAMI_EXPLORER_URL;
+
+export const gamiChain: Chain = defineChain({
+  id: Number.isFinite(GAMI_CHAIN_ID) && GAMI_CHAIN_ID > 0 ? GAMI_CHAIN_ID : 9000,
+  name: 'Gami',
+  nativeCurrency: { name: 'GAMI', symbol: 'GAMI', decimals: 18 },
+  rpcUrls: { default: { http: [GAMI_RPC] } },
+  ...(GAMI_EXPLORER
+    ? { blockExplorers: { default: { name: 'Gami Explorer', url: GAMI_EXPLORER } } }
+    : {}),
+  testnet: true,
+});
+
 export const CHAINS: Record<ChainId, ChainConfig> = {
+  gami: {
+    id: 'gami',
+    kind: 'evm',
+    label: 'Gami',
+    symbol: 'GAMI',
+    accent: 'yellow',
+    rpc: GAMI_RPC,
+    decimals: 18,
+    feeCeiling: 0.01,
+    viemChain: gamiChain,
+  },
   base: {
     id: 'base',
     kind: 'evm',
@@ -75,4 +109,4 @@ export const CHAINS: Record<ChainId, ChainConfig> = {
   },
 };
 
-export const CHAIN_ORDER: ChainId[] = ['base', 'polygon', 'arbitrum', 'solana'];
+export const CHAIN_ORDER: ChainId[] = ['gami', 'base', 'polygon', 'arbitrum', 'solana'];

@@ -70,6 +70,9 @@ const PERSONAS: { value: Persona; label: string }[] = [
 const HANDLE_RE = /^[a-z0-9_]{3,16}$/;
 const PIN_RE = /^\d{6}$/;
 const SUPPORT_URL = 'https://discord.gg/9Y8vpDAhbD';
+// Internal business monitoring dashboard (gami-protocol-mcp frontend / v0 build),
+// also surfaced as a Chrome extension. Configure via EXPO_PUBLIC_GAMI_DASHBOARD_URL.
+const DASHBOARD_URL = process.env.EXPO_PUBLIC_GAMI_DASHBOARD_URL ?? '';
 
 function clearNovaChat() {
   Alert.alert('Clear NOVA chat?', 'Removes your conversation history on this device.', [
@@ -497,9 +500,22 @@ export default function SettingsScreen() {
           <SettingsRow
             label="Help & community"
             hint="Discord"
-            last
             onPress={() => void Linking.openURL(SUPPORT_URL)}
             trailing={<ExternalLink color={COLORS.muted} size={18} />}
+          />
+          <SettingsRow
+            label="Monitoring dashboard"
+            hint={DASHBOARD_URL ? 'Business analytics' : 'Not configured'}
+            last
+            onPress={
+              DASHBOARD_URL
+                ? () => {
+                    void fireEvent('dashboard.open', { source: 'settings' });
+                    void Linking.openURL(DASHBOARD_URL);
+                  }
+                : undefined
+            }
+            trailing={<ExternalLink color={DASHBOARD_URL ? COLORS.cyan : COLORS.muted} size={18} />}
           />
         </SettingsSection>
 

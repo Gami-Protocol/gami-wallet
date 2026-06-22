@@ -96,6 +96,32 @@ Simply send a message to your Bilt project: "Deploy this app to production"
 
 Bilt will handle the build and provide you with download links or submission-ready builds.
 
+## Gami Protocol integrations
+
+The wallet integrates with the Gami Protocol stack. All endpoints are read from
+`EXPO_PUBLIC_*` environment variables (inlined at build time) so nothing is
+hardcoded. They are optional — each integration degrades gracefully when unset.
+
+| Variable                         | Used by                | Default                 | Description                                                                                                                                                                         |
+| -------------------------------- | ---------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `EXPO_PUBLIC_GAMI_RPC_URL`       | gami-protocol-chain    | `http://localhost:8545` | EVM RPC endpoint for the Gami chain (balances + sends).                                                                                                                             |
+| `EXPO_PUBLIC_GAMI_CHAIN_ID`      | gami-protocol-chain    | `9000`                  | Numeric EVM chain id used by viem.                                                                                                                                                  |
+| `EXPO_PUBLIC_GAMI_EXPLORER_URL`  | gami-protocol-chain    | _(none)_                | Optional block explorer base URL.                                                                                                                                                   |
+| `EXPO_PUBLIC_GAMI_MCP_URL`       | gami-protocol-mcp      | _(none)_                | Base URL of the agentic MCP backend. When set, NOVA's offline fallback generates personalized quests via `POST /api/quests/generate`; otherwise it uses the static local responder. |
+| `EXPO_PUBLIC_GAMI_DASHBOARD_URL` | v0-gami-protocol-build | _(none)_                | Link to the internal business-monitoring dashboard (also shipped as a Chrome extension), surfaced under Settings → Data & Support.                                                  |
+
+- **Gami chain**: added to `lib/wallet/chains.ts` as a viem custom chain and
+  appears first in the chain list alongside Base/Polygon/Arbitrum/Solana.
+- **Agentic questing**: `lib/mcp.ts` calls the MCP backend; `lib/nova.ts`'s
+  offline responder uses it for quest suggestions with an automatic fallback to
+  the static responder. (When signed in, NOVA still streams from the Supabase
+  edge function as the primary path.)
+- **Dashboard link**: Settings → Data & Support opens
+  `EXPO_PUBLIC_GAMI_DASHBOARD_URL` (shows "Not configured" until set).
+
+Set these as [EAS environment variables](https://docs.expo.dev/eas/environment-variables/)
+for builds, or in a local `.env` for `npx expo start`.
+
 ## How can I make changes to my app?
 
 **Via Bilt (Easiest)**

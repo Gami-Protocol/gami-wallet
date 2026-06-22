@@ -21,8 +21,8 @@ import {
   type WalletContext,
   greeting,
   loadMessages,
-  localRespond,
   persistRemote,
+  respond,
   saveMessages,
   streamReply,
 } from '@/lib/nova';
@@ -158,6 +158,8 @@ function MessageBubble({ message, streaming }: { message: NovaMessage; streaming
 
 export default function NovaScreen() {
   const persona = useGameStore((s) => s.persona);
+  const xp = useGameStore((s) => s.xp);
+  const interests = useGameStore((s) => s.interests);
   const { session } = useSession();
   const [messages, setMessages] = useState<NovaMessage[]>([]);
   const [input, setInput] = useState('');
@@ -271,15 +273,20 @@ export default function NovaScreen() {
         });
 
         if (!used) {
-          // Backend unavailable / signed out — fall back to the local responder.
-          const local = localRespond(trimmed, persona);
+          // Backend unavailable / signed out — fall back to the local responder,
+          // which routes quest intent to the MCP quest agent when configured.
+          const local = await respond(trimmed, persona, {
+            walletId: walletRef.current.addresses?.evm,
+            xp,
+            interests,
+          });
           setStreamingId(null);
           const t = setTimeout(() => revealLocal({ ...local, id: replyId }, withUser), 120);
           timers.current.push(t);
         }
       })();
     },
-    [messages, persona, streamingId, persist, revealLocal],
+    [messages, persona, streamingId, persist, revealLocal, xp, interests],
   );
 
   const online = Boolean(session);
